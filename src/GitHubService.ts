@@ -4,6 +4,9 @@ import { Context } from '@actions/github/lib/context'
 import { ChangedFile } from './types'
 
 export class GitHubService {
+  private static readonly FILES_PER_PAGE = 100
+  private static readonly COMMENTS_PER_PAGE = 100
+  
   private readonly octokit: ReturnType<typeof github.getOctokit>
   private readonly context: Context
   private readonly commentIdentifier = '<!-- PR Test Coverage Report -->'
@@ -23,7 +26,7 @@ export class GitHubService {
       // Fetch all changed files with pagination
       const allFiles = []
       let page = 1
-      const perPage = 100
+      const perPage = GitHubService.FILES_PER_PAGE
       
       while (true) {
         const { data: files } = await this.octokit.rest.pulls.listFiles({
@@ -103,18 +106,40 @@ export class GitHubService {
     }
 
     try {
-      const { data: comments } = await this.octokit.rest.issues.listComments({
-        owner: this.context.repo.owner,
-        repo: this.context.repo.repo,
-        issue_number: pullRequest.number,
-        per_page: 100
-      })
+      // Search through comments with pagination to handle PRs with many comments
+      let page = 1
+      const perPage = GitHubService.COMMENTS_PER_PAGE
+      
+      while (true) {
+        const { data: comments } = await this.octokit.rest.issues.listComments({
+          owner: this.context.repo.owner,
+          repo: this.context.repo.repo,
+          issue_number: pullRequest.number,
+          per_page: perPage,
+          page: page
+        })
+        
+        if (comments.length === 0) {
+          break
+        }
+        
+        const existingComment = comments.find(comment => 
+          comment.body?.includes(this.commentIdentifier)
+        )
+        
+        if (existingComment) {
+          return { id: existingComment.id }
+        }
+        
+        // If we got fewer comments than the page size, we've reached the end
+        if (comments.length < perPage) {
+          break
+        }
+        
+        page++
+      }
 
-      const existingComment = comments.find(comment => 
-        comment.body?.includes(this.commentIdentifier)
-      )
-
-      return existingComment ? { id: existingComment.id } : null
+      return null
     } catch (error) {
       core.warning(`Failed to find existing comment: ${error}`)
       return null

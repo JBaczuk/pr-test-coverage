@@ -5,11 +5,13 @@ import { Context } from '@actions/github/lib/context'
 import { LcovParser } from './LcovParser'
 import { CoverageReporter } from './CoverageReporter'
 import { GitHubService } from './GitHubService'
-import { CoverageData, ActionInputs } from './types'
+import { CoverageData, ActionInputs, CoverageReport } from './types'
 import * as fs from 'fs'
 import * as path from 'path'
 
 export class PrTestCoverageAction {
+  private static readonly DEFAULT_ARTIFACT_RETENTION_DAYS = 30
+  
   private readonly inputs: ActionInputs
   private readonly context: Context
   private readonly githubService: GitHubService
@@ -26,6 +28,9 @@ export class PrTestCoverageAction {
 
   async execute(): Promise<void> {
     core.info('Starting PR Test Coverage Action...')
+
+    // Validate inputs
+    this.validateInputs()
 
     // Validate that we're running in a PR context
     if (!this.context.payload.pull_request) {
@@ -73,7 +78,25 @@ export class PrTestCoverageAction {
     core.info('PR Test Coverage Action completed successfully!')
   }
 
-  private checkCoverageThresholds(report: any): void {
+  private validateInputs(): void {
+    if (!this.inputs.lcovFile) {
+      throw new Error('lcov-file input is required')
+    }
+    
+    if (!this.inputs.githubToken) {
+      throw new Error('github-token input is required')
+    }
+    
+    if (this.inputs.allFilesMinimumCoverage < 0 || this.inputs.allFilesMinimumCoverage > 100) {
+      throw new Error('all-files-minimum-coverage must be between 0 and 100')
+    }
+    
+    if (this.inputs.changedFilesMinimumCoverage < 0 || this.inputs.changedFilesMinimumCoverage > 100) {
+      throw new Error('changed-files-minimum-coverage must be between 0 and 100')
+    }
+  }
+
+  private checkCoverageThresholds(report: CoverageReport): void {
     // Check all files coverage threshold
     if (this.inputs.allFilesMinimumCoverage > 0) {
       const allFilesCoverage = report.allFiles.linesCoverage
@@ -108,7 +131,7 @@ export class PrTestCoverageAction {
         files,
         process.cwd(), // rootDirectory
         {
-          retentionDays: 30 // Default retention period
+          retentionDays: PrTestCoverageAction.DEFAULT_ARTIFACT_RETENTION_DAYS
         }
       )
       

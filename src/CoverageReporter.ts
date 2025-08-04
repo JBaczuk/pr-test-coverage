@@ -6,8 +6,16 @@ export class CoverageReporter {
   generateReport(coverageData: CoverageData, changedFiles: ChangedFile[]): CoverageReport {
     const allFiles = this.calculateSummary(Object.values(coverageData))
     
-    // Path matching logic
+    // Path matching logic - optimized to avoid O(n²) complexity
     const pathMatches = new Map<string, string>()
+    const lcovFiles = Object.keys(coverageData)
+    
+    // Create normalized lookup maps for better performance
+    const normalizedLcovMap = new Map<string, string>()
+    lcovFiles.forEach(lcovFile => {
+      const normalized = path.normalize(lcovFile.replace(/^\.\//, ''))
+      normalizedLcovMap.set(normalized, lcovFile)
+    })
     
     changedFiles.forEach(changedFile => {
       const changedPath = changedFile.filename
@@ -18,30 +26,22 @@ export class CoverageReporter {
         return
       }
       
-      // Try to find matches with different approaches
-      Object.keys(coverageData).forEach(lcovFile => {
-        // Normalize paths by removing leading ./ and resolving relative paths
-        const normalizedChanged = path.normalize(changedPath.replace(/^\.\//, ''))
-        const normalizedLcov = path.normalize(lcovFile.replace(/^\.\//, ''))
-        
-        // Check if paths match after normalization
-        if (normalizedChanged === normalizedLcov) {
-          pathMatches.set(changedPath, lcovFile)
-          return
+      // Normalize the changed file path
+      const normalizedChanged = path.normalize(changedPath.replace(/^\.\//, ''))
+      
+      // Check normalized exact match
+      if (normalizedLcovMap.has(normalizedChanged)) {
+        pathMatches.set(changedPath, normalizedLcovMap.get(normalizedChanged)!)
+        return
+      }
+      
+      // Check for suffix/prefix matches (less common, so check last)
+      for (const [normalizedLcov, originalLcov] of normalizedLcovMap.entries()) {
+        if (normalizedChanged.endsWith(normalizedLcov) || normalizedLcov.endsWith(normalizedChanged)) {
+          pathMatches.set(changedPath, originalLcov)
+          break
         }
-        
-        // Check if the changed file path ends with the LCOV file path (handles different root directories)
-        if (normalizedChanged.endsWith(normalizedLcov)) {
-          pathMatches.set(changedPath, lcovFile)
-          return
-        }
-        
-        // Check if the LCOV file path ends with the changed file path
-        if (normalizedLcov.endsWith(normalizedChanged)) {
-          pathMatches.set(changedPath, lcovFile)
-          return
-        }
-      })
+      }
     })
     
     // Filter coverage data for changed files using the path matches
