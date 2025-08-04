@@ -1,6 +1,6 @@
 {
   "name": "pr-test-coverage",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "A Github Action to report the test coverage of changed files in a pull request",
   "main": "dist/index.js",
   "scripts": {
