@@ -1,0 +1,39 @@
+name: 'PR Test Coverage'
+description: 'A Github Action to report the test coverage of changed files in a pull request'
+author: 'Jordan Baczuk'
+branding:
+  icon: 'shield'
+  color: 'green'
+
+inputs:
+  lcov-file:
+    description: 'Path to the LCOV file (e.g., coverage/lcov.info)'
+    required: true
+  github-token:
+    description: 'GitHub token for accessing API and posting comments'
+    required: true
+    default: ${{ github.token }}
+  working-directory:
+    description: 'Working directory to run the action from'
+    required: false
+    default: ''
+  all-files-minimum-coverage:
+    description: 'Minimum coverage percentage for all files (0-100) (optional)'
+    required: false
+    default: '0'
+  changed-files-minimum-coverage:
+    description: 'Minimum coverage percentage for changed files (0-100) (optional)'
+    required: false
+    default: '0'
+  artifact-name:
+    description: 'Name for the coverage artifact upload (leave empty to skip)'
+    required: false
+    default: ''
+  update-comment:
+    description: 'Whether to update existing comment or create new one'
+    required: false
+    default: 'true'
+
+runs:
+  using: 'node20'
+  main: 'dist/index.js'
