@@ -39,7 +39,7 @@ jobs:
           npm test -- --coverage
       
       - name: PR Test Coverage
-        uses: qnergy/pr-test-coverage@v1
+        uses: jbaczuk/pr-test-coverage@v1
         with:
           lcov-file: coverage/lcov.info
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -49,7 +49,7 @@ jobs:
 
 ```yaml
 - name: PR Test Coverage
-  uses: qnergy/pr-test-coverage@v1
+  uses: jbaczuk/pr-test-coverage@v1
   with:
     # Required: Path to LCOV file
     lcov-file: coverage/lcov.info
@@ -161,7 +161,7 @@ The action supports standard LCOV format with the following metrics:
   run: npm test -- --coverage --coverageReporters=lcov
 
 - name: PR Test Coverage
-  uses: qnergy/pr-test-coverage@v1
+  uses: jbaczuk/pr-test-coverage@v1
   with:
     lcov-file: coverage/lcov.info
     github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -178,7 +178,7 @@ The action supports standard LCOV format with the following metrics:
   run: pytest --cov=. --cov-report=lcov
 
 - name: PR Test Coverage
-  uses: qnergy/pr-test-coverage@v1
+  uses: jbaczuk/pr-test-coverage@v1
   with:
     lcov-file: coverage.lcov
     github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -193,7 +193,7 @@ The action supports standard LCOV format with the following metrics:
     go tool cover -func=coverage.out -o=coverage.lcov
 
 - name: PR Test Coverage
-  uses: qnergy/pr-test-coverage@v1
+  uses: jbaczuk/pr-test-coverage@v1
   with:
     lcov-file: coverage.lcov
     github-token: ${{ secrets.GITHUB_TOKEN }}

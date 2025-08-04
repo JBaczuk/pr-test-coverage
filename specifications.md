@@ -31,7 +31,7 @@ permissions:
 
 ## Example Workflow
 ```yaml
-- uses: qnergy/pr-test-coverage@v1
+- uses: jbaczuk/pr-test-coverage@v1
   with:
     # Lcov file location. For example, coverage/lcov.info
     lcov-file: coverage/lcov.info
