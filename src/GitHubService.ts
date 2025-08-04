@@ -27,10 +27,18 @@ export class GitHubService {
         per_page: 100
       })
 
-      return files.map(file => ({
+      const changedFiles = files.map(file => ({
         filename: file.filename,
         status: file.status
       }))
+      
+      // Log all changed files for debugging
+      core.info(`All changed files (${changedFiles.length}):`)      
+      changedFiles.forEach((file, index) => {
+        core.info(`  ${index + 1}. ${file.filename} (${file.status})`)
+      })
+      
+      return changedFiles
     } catch (error) {
       core.error(`Failed to get changed files: ${error}`)
       throw new Error(`Failed to get changed files: ${error}`)

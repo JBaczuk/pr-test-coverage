@@ -10,11 +10,12 @@ export class CoverageReporter {
     core.info(`Total files in LCOV: ${Object.keys(coverageData).length}`)
     core.info(`Changed files: ${changedFiles.length}`)
     
-    // Log first few file paths for debugging
-    const lcovFiles = Object.keys(coverageData).slice(0, 10)
-    const changedFilePaths = changedFiles.slice(0, 10).map(f => f.filename)
-    core.info(`Sample LCOV files: ${lcovFiles.join(', ')}`)
-    core.info(`Sample changed files: ${changedFilePaths.join(', ')}`)
+    // Log all LCOV files for debugging
+    const lcovFiles = Object.keys(coverageData)
+    core.info(`All LCOV files (${lcovFiles.length}):`)
+    lcovFiles.forEach((file, index) => {
+      core.info(`  ${index + 1}. ${file}`)
+    })
     
     // Improved path matching logic
     const pathMatches = new Map<string, string>()
