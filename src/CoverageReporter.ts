@@ -55,15 +55,6 @@ export class CoverageReporter {
           potentialMatches.push(`${changedPath} -> ${lcovFile} (prefix match)`)
           return
         }
-        
-        // Check if just the filename matches (last resort for files moved between directories)
-        const changedFilename = path.basename(normalizedChanged)
-        const lcovFilename = path.basename(normalizedLcov)
-        if (changedFilename === lcovFilename && changedFilename.match(/\.(ts|js|tsx|jsx)$/)) {
-          pathMatches.set(changedPath, lcovFile)
-          potentialMatches.push(`${changedPath} -> ${lcovFile} (filename match)`)
-          return
-        }
       })
     })
     
