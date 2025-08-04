@@ -1,14 +1,33 @@
 import { CoverageData, CoverageReport, CoverageSummary, ChangedFile } from './types'
+import * as core from '@actions/core'
 import * as path from 'path'
 
 export class CoverageReporter {
   generateReport(coverageData: CoverageData, changedFiles: ChangedFile[]): CoverageReport {
     const allFiles = this.calculateSummary(Object.values(coverageData))
     
+    // Debug logging
+    core.info(`Total files in LCOV: ${Object.keys(coverageData).length}`)
+    core.info(`Changed files: ${changedFiles.length}`)
+    
+    // Log first few file paths for debugging
+    const lcovFiles = Object.keys(coverageData).slice(0, 5)
+    const changedFilePaths = changedFiles.slice(0, 5).map(f => f.filename)
+    core.info(`Sample LCOV files: ${lcovFiles.join(', ')}`)
+    core.info(`Sample changed files: ${changedFilePaths.join(', ')}`)
+    
     // Filter coverage data for changed files only
     const changedFileCoverage = changedFiles
-      .map(file => coverageData[file.filename])
+      .map(file => {
+        const coverage = coverageData[file.filename]
+        if (!coverage) {
+          core.debug(`No coverage found for changed file: ${file.filename}`)
+        }
+        return coverage
+      })
       .filter(coverage => coverage !== undefined)
+    
+    core.info(`Found coverage for ${changedFileCoverage.length} out of ${changedFiles.length} changed files`)
     
     const changedFilesSummary = this.calculateSummary(changedFileCoverage)
     

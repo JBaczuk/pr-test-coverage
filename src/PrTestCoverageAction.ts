@@ -99,8 +99,12 @@ export class PrTestCoverageAction {
     try {
       const files = [this.inputs.lcovFile]
       
+      // Make artifact name unique to avoid conflicts
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-')
+      const uniqueArtifactName = `${this.inputs.artifactName}-${timestamp}`
+      
       const { id, size } = await artifact.uploadArtifact(
-        this.inputs.artifactName,
+        uniqueArtifactName,
         files,
         process.cwd(), // rootDirectory
         {
@@ -108,7 +112,7 @@ export class PrTestCoverageAction {
         }
       )
       
-      core.info(`Successfully uploaded artifact: ${this.inputs.artifactName} (ID: ${id}, Size: ${size} bytes)`)
+      core.info(`Successfully uploaded artifact: ${uniqueArtifactName} (ID: ${id}, Size: ${size} bytes)`)
     } catch (error) {
       core.warning(`Failed to upload artifact: ${error}`)
     }
