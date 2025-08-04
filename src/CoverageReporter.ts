@@ -16,30 +16,73 @@ export class CoverageReporter {
     core.info(`Sample LCOV files: ${lcovFiles.join(', ')}`)
     core.info(`Sample changed files: ${changedFilePaths.join(', ')}`)
     
-    // Check for potential path matches
+    // Improved path matching logic
+    const pathMatches = new Map<string, string>()
     const potentialMatches: string[] = []
+    
     changedFiles.forEach(changedFile => {
+      const changedPath = changedFile.filename
+      
+      // Try exact match first
+      if (coverageData[changedPath]) {
+        pathMatches.set(changedPath, changedPath)
+        return
+      }
+      
+      // Try to find matches with different approaches
       Object.keys(coverageData).forEach(lcovFile => {
-        if (lcovFile.endsWith(changedFile.filename) || changedFile.filename.endsWith(lcovFile)) {
-          potentialMatches.push(`${changedFile.filename} <-> ${lcovFile}`)
+        // Normalize paths by removing leading ./ and resolving relative paths
+        const normalizedChanged = path.normalize(changedPath.replace(/^\.\//, ''))
+        const normalizedLcov = path.normalize(lcovFile.replace(/^\.\//, ''))
+        
+        // Check if paths match after normalization
+        if (normalizedChanged === normalizedLcov) {
+          pathMatches.set(changedPath, lcovFile)
+          potentialMatches.push(`${changedPath} -> ${lcovFile} (normalized)`)
+          return
+        }
+        
+        // Check if the changed file path ends with the LCOV file path (handles different root directories)
+        if (normalizedChanged.endsWith(normalizedLcov)) {
+          pathMatches.set(changedPath, lcovFile)
+          potentialMatches.push(`${changedPath} -> ${lcovFile} (suffix match)`)
+          return
+        }
+        
+        // Check if the LCOV file path ends with the changed file path
+        if (normalizedLcov.endsWith(normalizedChanged)) {
+          pathMatches.set(changedPath, lcovFile)
+          potentialMatches.push(`${changedPath} -> ${lcovFile} (prefix match)`)
+          return
+        }
+        
+        // Check if just the filename matches (last resort for files moved between directories)
+        const changedFilename = path.basename(normalizedChanged)
+        const lcovFilename = path.basename(normalizedLcov)
+        if (changedFilename === lcovFilename && changedFilename.match(/\.(ts|js|tsx|jsx)$/)) {
+          pathMatches.set(changedPath, lcovFile)
+          potentialMatches.push(`${changedPath} -> ${lcovFile} (filename match)`)
+          return
         }
       })
     })
     
     if (potentialMatches.length > 0) {
-      core.info(`Potential path matches found: ${potentialMatches.slice(0, 5).join(', ')}`)
+      core.info(`Path matches found: ${potentialMatches.slice(0, 10).join(', ')}`)
     } else {
-      core.info('No potential path matches found between changed files and LCOV files')
+      core.info('No path matches found between changed files and LCOV files')
     }
     
-    // Filter coverage data for changed files only
+    // Filter coverage data for changed files using the path matches
     const changedFileCoverage = changedFiles
       .map(file => {
-        const coverage = coverageData[file.filename]
-        if (!coverage) {
-          core.debug(`No coverage found for changed file: ${file.filename}`)
+        const matchedLcovPath = pathMatches.get(file.filename)
+        if (matchedLcovPath) {
+          return coverageData[matchedLcovPath]
         }
-        return coverage
+        
+        core.debug(`No coverage found for changed file: ${file.filename}`)
+        return undefined
       })
       .filter(coverage => coverage !== undefined)
     
@@ -49,9 +92,10 @@ export class CoverageReporter {
     
     // Generate file details for changed files, ordered by directory
     const fileDetails = changedFiles
-      .filter(file => coverageData[file.filename])
+      .filter(file => pathMatches.has(file.filename))
       .map(file => {
-        const coverage = coverageData[file.filename]
+        const matchedLcovPath = pathMatches.get(file.filename)!
+        const coverage = coverageData[matchedLcovPath]
         return {
           file: file.filename,
           lines: {
