@@ -20,25 +20,38 @@ export class GitHubService {
     }
 
     try {
-      const { data: files } = await this.octokit.rest.pulls.listFiles({
-        owner: this.context.repo.owner,
-        repo: this.context.repo.repo,
-        pull_number: pullRequest.number,
-        per_page: 100
-      })
+      // Fetch all changed files with pagination
+      const allFiles = []
+      let page = 1
+      const perPage = 100
+      
+      while (true) {
+        const { data: files } = await this.octokit.rest.pulls.listFiles({
+          owner: this.context.repo.owner,
+          repo: this.context.repo.repo,
+          pull_number: pullRequest.number,
+          per_page: perPage,
+          page: page
+        })
+        
+        if (files.length === 0) {
+          break
+        }
+        
+        allFiles.push(...files)
+        
+        // If we got fewer files than the page size, we've reached the end
+        if (files.length < perPage) {
+          break
+        }
+        
+        page++
+      }
 
-      const changedFiles = files.map(file => ({
+      return allFiles.map(file => ({
         filename: file.filename,
         status: file.status
       }))
-      
-      // Log all changed files for debugging
-      core.info(`All changed files (${changedFiles.length}):`)      
-      changedFiles.forEach((file, index) => {
-        core.info(`  ${index + 1}. ${file.filename} (${file.status})`)
-      })
-      
-      return changedFiles
     } catch (error) {
       core.error(`Failed to get changed files: ${error}`)
       throw new Error(`Failed to get changed files: ${error}`)

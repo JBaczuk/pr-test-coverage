@@ -6,20 +6,8 @@ export class CoverageReporter {
   generateReport(coverageData: CoverageData, changedFiles: ChangedFile[]): CoverageReport {
     const allFiles = this.calculateSummary(Object.values(coverageData))
     
-    // Debug logging
-    core.info(`Total files in LCOV: ${Object.keys(coverageData).length}`)
-    core.info(`Changed files: ${changedFiles.length}`)
-    
-    // Log all LCOV files for debugging
-    const lcovFiles = Object.keys(coverageData)
-    core.info(`All LCOV files (${lcovFiles.length}):`)
-    lcovFiles.forEach((file, index) => {
-      core.info(`  ${index + 1}. ${file}`)
-    })
-    
-    // Improved path matching logic
+    // Path matching logic
     const pathMatches = new Map<string, string>()
-    const potentialMatches: string[] = []
     
     changedFiles.forEach(changedFile => {
       const changedPath = changedFile.filename
@@ -39,31 +27,22 @@ export class CoverageReporter {
         // Check if paths match after normalization
         if (normalizedChanged === normalizedLcov) {
           pathMatches.set(changedPath, lcovFile)
-          potentialMatches.push(`${changedPath} -> ${lcovFile} (normalized)`)
           return
         }
         
         // Check if the changed file path ends with the LCOV file path (handles different root directories)
         if (normalizedChanged.endsWith(normalizedLcov)) {
           pathMatches.set(changedPath, lcovFile)
-          potentialMatches.push(`${changedPath} -> ${lcovFile} (suffix match)`)
           return
         }
         
         // Check if the LCOV file path ends with the changed file path
         if (normalizedLcov.endsWith(normalizedChanged)) {
           pathMatches.set(changedPath, lcovFile)
-          potentialMatches.push(`${changedPath} -> ${lcovFile} (prefix match)`)
           return
         }
       })
     })
-    
-    if (potentialMatches.length > 0) {
-      core.info(`Path matches found: ${potentialMatches.slice(0, 10).join(', ')}`)
-    } else {
-      core.info('No path matches found between changed files and LCOV files')
-    }
     
     // Filter coverage data for changed files using the path matches
     const changedFileCoverage = changedFiles
@@ -73,12 +52,9 @@ export class CoverageReporter {
           return coverageData[matchedLcovPath]
         }
         
-        core.debug(`No coverage found for changed file: ${file.filename}`)
         return undefined
       })
       .filter(coverage => coverage !== undefined)
-    
-    core.info(`Found coverage for ${changedFileCoverage.length} out of ${changedFiles.length} changed files`)
     
     const changedFilesSummary = this.calculateSummary(changedFileCoverage)
     
