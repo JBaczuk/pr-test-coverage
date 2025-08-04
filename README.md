@@ -1,6 +1,6 @@
 # PR Test Coverage
 
-A GitHub Action that generates and posts test coverage reports for pull requests using LCOV data.
+A Github Action to report the test coverage of changed files in a pull request. It provides a summary of the coverage for all files and changed files separately, and a detailed table with coverage metrics per changed file.
 
 ## Features
 
