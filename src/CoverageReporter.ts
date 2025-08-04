@@ -11,10 +11,26 @@ export class CoverageReporter {
     core.info(`Changed files: ${changedFiles.length}`)
     
     // Log first few file paths for debugging
-    const lcovFiles = Object.keys(coverageData).slice(0, 5)
-    const changedFilePaths = changedFiles.slice(0, 5).map(f => f.filename)
+    const lcovFiles = Object.keys(coverageData).slice(0, 10)
+    const changedFilePaths = changedFiles.slice(0, 10).map(f => f.filename)
     core.info(`Sample LCOV files: ${lcovFiles.join(', ')}`)
     core.info(`Sample changed files: ${changedFilePaths.join(', ')}`)
+    
+    // Check for potential path matches
+    const potentialMatches: string[] = []
+    changedFiles.forEach(changedFile => {
+      Object.keys(coverageData).forEach(lcovFile => {
+        if (lcovFile.endsWith(changedFile.filename) || changedFile.filename.endsWith(lcovFile)) {
+          potentialMatches.push(`${changedFile.filename} <-> ${lcovFile}`)
+        }
+      })
+    })
+    
+    if (potentialMatches.length > 0) {
+      core.info(`Potential path matches found: ${potentialMatches.slice(0, 5).join(', ')}`)
+    } else {
+      core.info('No potential path matches found between changed files and LCOV files')
+    }
     
     // Filter coverage data for changed files only
     const changedFileCoverage = changedFiles
