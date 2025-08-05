@@ -99,29 +99,27 @@ permissions:
 
 The action will post a comment on your pull request that looks like this:
 
-```markdown
-## Coverage Report ✅
-
-### All Files
-- Lines: 847/1205 (70.3%) ✅
-- Functions: 156/198 (78.8%)
-- Branches: 234/298 (78.5%)
-
-### Changed Files
-- Lines: 142/165 (86.1%) ✅
-- Functions: 28/32 (87.5%)
-- Branches: 45/52 (86.5%)
-
-Files changed:
-
-| File | Lines | Line % | Functions | Function % | Branches | Branch % |
-|------|-------|--------|-----------|------------|----------|----------|
-| src/components/Button/Button.tsx | 24/28 | 85.7% | 4/5 | 80.0% | 8/10 | 80.0% |
-| src/components/Modal/Modal.tsx | 45/52 | 86.5% | 8/9 | 88.9% | 12/15 | 80.0% |
-| src/hooks/useAuth.ts | 32/35 | 91.4% | 6/7 | 85.7% | 10/12 | 83.3% |
-| src/services/api/userService.ts | 28/32 | 87.5% | 7/8 | 87.5% | 11/13 | 84.6% |
-| src/utils/validation.ts | 13/18 | 72.2% | 3/3 | 100.0% | 4/2 | 66.7% |
-```
+> ## Coverage Report ✅
+> 
+> ### All Files
+> - Lines: 847/1205 (70.3%) ✅
+> - Functions: 156/198 (78.8%)
+> - Branches: 234/298 (78.5%)
+> 
+> ### Changed Files
+> - Lines: 142/165 (86.1%) ✅
+> - Functions: 28/32 (87.5%)
+> - Branches: 45/52 (86.5%)
+> 
+> Files changed:
+> 
+> | File | Lines | Line % | Functions | Function % | Branches | Branch % |
+> |------|-------|--------|-----------|------------|----------|----------|
+> | src/components/Button/Button.tsx | 24/28 | 85.7% | 4/5 | 80.0% | 8/10 | 80.0% |
+> | src/components/Modal/Modal.tsx | 45/52 | 86.5% | 8/9 | 88.9% | 12/15 | 80.0% |
+> | src/hooks/useAuth.ts | 32/35 | 91.4% | 6/7 | 85.7% | 10/12 | 83.3% |
+> | src/services/api/userService.ts | 28/32 | 87.5% | 7/8 | 87.5% | 11/13 | 84.6% |
+> | src/utils/validation.ts | 13/18 | 72.2% | 3/3 | 100.0% | 4/2 | 66.7% |
 
 ## Coverage Status Icons
 
