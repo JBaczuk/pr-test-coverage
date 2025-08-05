@@ -103,7 +103,7 @@ export class CoverageReporter {
     const allFilesStatus = this.getCoverageStatus(report.allFiles.linesCoverage)
     const changedFilesStatus = this.getCoverageStatus(report.changedFiles.linesCoverage)
 
-    let markdown = `## LCOV Report ${allFilesStatus}\n\n`
+    let markdown = `## Coverage Report ${allFilesStatus}\n\n`
     
     // All Files Summary
     markdown += `### All Files\n`
