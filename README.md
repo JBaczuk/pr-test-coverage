@@ -100,7 +100,7 @@ permissions:
 The action will post a comment on your pull request that looks like this:
 
 ```markdown
-## LCOV Report ✅
+## Coverage Report ✅
 
 ### All Files
 - Lines: 847/1205 (70.3%) ✅
