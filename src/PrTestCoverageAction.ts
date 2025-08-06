@@ -23,7 +23,7 @@ export class PrTestCoverageAction {
     this.context = context
     this.githubService = new GitHubService(inputs.githubToken, context)
     this.lcovParser = new LcovParser()
-    this.coverageReporter = new CoverageReporter()
+    this.coverageReporter = new CoverageReporter(inputs.allFilesMinimumCoverage, inputs.changedFilesMinimumCoverage)
   }
 
   async execute(): Promise<void> {

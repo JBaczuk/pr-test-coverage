@@ -28,6 +28,7 @@ permissions:
 10. Optionally the action should upload the coverage report as an artifact if the `artifact-name` input parameter is set using the value of the `artifact-name` input parameter as the artifact name.
 11. Optionally the action should use the `working-directory` input parameter to specify the working directory. Default: empty (repository root)
 12. The report should include the full path of each file, ordered by directory, and should include coverage of each directory where files were changed.
+13. In the summaries, indicate acceptable, warning, and unnacceptable coverage with ✅, ⚠️, and ❌, respectively. Use >= 80%, >= 60%, and < 60% as defaults, respectively.
 
 ## Example Workflow
 ```yaml
@@ -63,15 +64,15 @@ permissions:
 ## Example PR Comment
 
 ```markdown
-## Coverage Report ✅
+## Coverage Report ⚠️
 
 ### All Files
-- Lines: 847/1205 (70.3%) ✅
+- Lines: 847/1205 (70.3%) ⚠️
 - Functions: 156/198 (78.8%)
 - Branches: 234/298 (78.5%)
 
 ### Changed Files
-- Lines: 22/40 (55.0%) ✅
+- Lines: 22/40 (55.0%) ❌
 - Functions: 15/19 (78.9%)
 - Branches: 24/31 (77.4%)
 

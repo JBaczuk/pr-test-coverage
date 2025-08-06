@@ -99,10 +99,10 @@ permissions:
 
 The action will post a comment on your pull request that looks like this:
 
-> ## Coverage Report ✅
+> ## Coverage Report ⚠️
 > 
 > ### All Files
-> - Lines: 847/1205 (70.3%) ✅
+> - Lines: 847/1205 (70.3%) ⚠️
 > - Functions: 156/198 (78.8%)
 > - Branches: 234/298 (78.5%)
 > 

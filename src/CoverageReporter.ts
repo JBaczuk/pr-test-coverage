@@ -5,6 +5,14 @@ import * as core from '@actions/core'
 import * as path from 'path'
 
 export class CoverageReporter {
+  private readonly allFilesMinimumCoverage: number
+  private readonly changedFilesMinimumCoverage: number
+
+  constructor(allFilesMinimumCoverage: number = 0, changedFilesMinimumCoverage: number = 0) {
+    this.allFilesMinimumCoverage = allFilesMinimumCoverage
+    this.changedFilesMinimumCoverage = changedFilesMinimumCoverage
+  }
+
   generateReport(coverageData: CoverageData, changedFiles: ChangedFile[]): CoverageReport {
     const allFiles = this.calculateSummary(Object.values(coverageData))
     
@@ -102,8 +110,8 @@ export class CoverageReporter {
   }
 
   generateMarkdownReport(report: CoverageReport): string {
-    const allFilesStatus = this.getCoverageStatus(report.allFiles.linesCoverage)
-    const changedFilesStatus = this.getCoverageStatus(report.changedFiles.linesCoverage)
+    const allFilesStatus = this.getCoverageStatus(report.allFiles.linesCoverage, true)
+    const changedFilesStatus = this.getCoverageStatus(report.changedFiles.linesCoverage, false)
 
     let markdown = `## Coverage Report ${allFilesStatus}\n\n`
     
@@ -184,7 +192,21 @@ export class CoverageReporter {
     }
   }
 
-  private getCoverageStatus(percentage: number): string {
-    return percentage >= 80 ? '✅' : percentage >= 60 ? '⚠️' : '❌'
+  private getCoverageStatus(percentage: number, isAllFiles: boolean = true): string {
+    const threshold = isAllFiles ? this.allFilesMinimumCoverage : this.changedFilesMinimumCoverage
+    
+    // If no threshold is set, use default behavior
+    if (threshold === 0) {
+      return percentage >= 80 ? '✅' : percentage >= 60 ? '⚠️' : '❌'
+    }
+    
+    // Use threshold-based logic
+    if (percentage >= threshold) {
+      return '✅'
+    } else if (percentage >= threshold - 10) {
+      return '⚠️'
+    } else {
+      return '❌'
+    }
   }
 }
