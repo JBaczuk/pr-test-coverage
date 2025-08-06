@@ -33,5 +33,13 @@ Make this change to the PR comment:
 > | &emsp; 📄 useValidation.ts                        | 3/4 | 75.0% | 3/3  | 100.0% | 2/4   | 50.0% |
 
 ## Instructions
-1. Update the specifications.md file to match this example
-2. Update the README.md file to match this example
+1. Create tests for the directory structure logic
+2. Check with @jbaczuk if the test logic is correct
+3. Implement the directory structure logic
+4. Iterate on the directory structure logic until it is correct
+5. Create tests for the markdown table generation logic
+6. Check with @jbaczuk if the test logic is correct
+7. Implement the markdown table generation logic
+8. Iterate on the markdown table generation logic until it is correct
+9. Update the specifications.md file to match this example
+10. Update the README.md file to match this example

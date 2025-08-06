@@ -1,4 +1,6 @@
 import { CoverageData, CoverageReport, CoverageSummary, ChangedFile } from './types'
+import { DirectoryStructure, FileDetail } from './DirectoryStructure'
+import { MarkdownTableGenerator } from './MarkdownTableGenerator'
 import * as core from '@actions/core'
 import * as path from 'path'
 
@@ -117,15 +119,38 @@ export class CoverageReporter {
     markdown += `- Functions: ${report.changedFiles.functionsHit}/${report.changedFiles.functionsTotal} (${report.changedFiles.functionsCoverage.toFixed(1)}%)\n`
     markdown += `- Branches: ${report.changedFiles.branchesHit}/${report.changedFiles.branchesTotal} (${report.changedFiles.branchesCoverage.toFixed(1)}%)\n\n`
 
-    // File Details Table
+    // File Details Table with nested directory structure
     if (report.fileDetails.length > 0) {
       markdown += `Files changed:\n\n`
-      markdown += `| File | Lines | Line % | Functions | Function % | Branches | Branch % |\n`
-      markdown += `|------|-------|--------|-----------|------------|----------|----------|\n`
-
-      for (const file of report.fileDetails) {
-        markdown += `| ${file.file} | ${file.lines.hit}/${file.lines.total} | ${file.lines.percentage.toFixed(1)}% | ${file.functions.hit}/${file.functions.total} | ${file.functions.percentage.toFixed(1)}% | ${file.branches.hit}/${file.branches.total} | ${file.branches.percentage.toFixed(1)}% |\n`
-      }
+      
+      // Convert fileDetails to FileDetail format for DirectoryStructure
+      const fileDetails: FileDetail[] = report.fileDetails.map(file => ({
+        file: file.file,
+        lines: {
+          hit: file.lines.hit,
+          total: file.lines.total,
+          percentage: file.lines.percentage
+        },
+        functions: {
+          hit: file.functions.hit,
+          total: file.functions.total,
+          percentage: file.functions.percentage
+        },
+        branches: {
+          hit: file.branches.hit,
+          total: file.branches.total,
+          percentage: file.branches.percentage
+        }
+      }))
+      
+      // Build directory tree and generate nested table
+      const directoryStructure = new DirectoryStructure()
+      const directoryTree = directoryStructure.buildDirectoryTree(fileDetails)
+      
+      const markdownGenerator = new MarkdownTableGenerator()
+      const nestedTable = markdownGenerator.generateTable(directoryTree)
+      
+      markdown += nestedTable
     }
 
     return markdown

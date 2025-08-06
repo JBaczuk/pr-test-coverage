@@ -63,24 +63,28 @@ permissions:
 ## Example PR Comment
 
 ```markdown
-## LCOV Report ✅
+## Coverage Report ✅
+
 ### All Files
-- Lines: 1573/2437 (64.5%) ✅ (Minimum coverage is 0%)
-- Functions: 146/257 (56.8%)
-- Branches: 252/282 (89.4%)
+- Lines: 847/1205 (70.3%) ✅
+- Functions: 156/198 (78.8%)
+- Branches: 234/298 (78.5%)
 
 ### Changed Files
-- Lines: 1573/2437 (64.5%) ✅ (Minimum coverage is 0%)
-- Functions: 146/257 (56.8%)
-- Branches: 252/282 (89.4%)
+- Lines: 22/40 (55.0%) ✅
+- Functions: 15/19 (78.9%)
+- Branches: 24/31 (77.4%)
 
 Files changed:
 
-| File                                                    | Lines   | Line % | Functions | Function % | Branches | Branch % |
-|---------------------------------------------------------|---------|--------|-----------|------------|----------|----------|
-| src/index.ts                                            | 0/43    | 0.0%   | 0/1       | 0.0%       | 0/1      | 0.0%     |
-| src/application/UseCaseError.ts                         | 6/6     | 100.0% | 1/1       | 100.0%     | 1/1      | 100.0%   |
-| src/application/usecases/HealthCheckUseCase.ts          | 18/18   | 100.0% | 2/2       | 100.0%     | 3/3      | 100.0%   |
-| src/application/usecases/LoginUser/Errors.ts            | 7/7     | 100.0% | 1/1       | 100.0%     | 1/1      | 100.0%   |
-| src/application/usecases/LoginUser/LoginUserUseCase.ts  | 33/33   | 100.0% | 2/2       | 100.0%     | 7/8      | 87.5%    |
+| **File** | **Lines** | **Line %** | **Functions** | **Function %** | **Branches** | **Branch %** |
+|------|-------|--------|-----------|------------|----------|----------|
+| **📁 src**                                        | **22/40** | **55.0%** | **15/19** | **78.9%** | **24/31** | **77.4%** |
+| **&emsp; 📁 components**                          | **19/36** | **52.8%** | **12/16** | **75.0%** | **22/27** | **81.5%** |
+| **&emsp;&emsp;&nbsp; 📁 Button**                  | **6/10** | **60.0%** | **4/5** | **80.0%** | **8/10** | **80.0%** |
+| &emsp;&emsp;&emsp;&nbsp;&nbsp; 📄 Button.tsx      | 6/10 | 60.0% | 4/5 | 80.0% | 8/10 | 80.0% |
+| **&emsp;&emsp;&nbsp; 📁 Modal**                   | **13/26** | **50.0%** | **8/11** | **72.7%** | **14/17** | **82.4%** |
+| &emsp;&emsp;&emsp;&nbsp;&nbsp; 📄 Modal.tsx       | 12/24 | 50.0% | 7/10 | 70.0% | 12/15 | 80.0% |
+| &emsp;&emsp;&emsp;&nbsp;&nbsp; 📄 Modal.types.ts  | 1/2   | 50.0% | 1/1 | 100.0% | 2/2   | 100.0% |
+| &emsp; 📄 useValidation.ts                        | 3/4 | 75.0% | 3/3  | 100.0% | 2/4   | 50.0% |
 ```
