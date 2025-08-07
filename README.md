@@ -1,6 +1,6 @@
 # PR Test Coverage
 
-A Github Action to report the test coverage of changed files in a pull request. It provides a summary of the coverage for all files and changed files separately, and a detailed table with coverage metrics per changed file.
+A Github Action to report the test coverage of changed files in a pull request. All it needs is an lcov.info file. It provides a summary of the coverage for all files and changed files separately, and a detailed table with coverage metrics per changed file.
 
 <img width="924" height="761" alt="image" src="https://github.com/user-attachments/assets/d0e61fa6-46c6-40b1-b9ce-b3c71a10321b" />
 
